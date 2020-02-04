@@ -5,11 +5,14 @@ import store from '../store'
 // 创建axios实例
 const service = axios.create({
   baseURL: process.env.BASE_API, // api的base_url
-  timeout: 15000 // 请求超时时间
+  timeout: 15000, // 请求超时时间
+  headers: { 'Content-Type': 'multipart/form-data' }
 })
 
 // request拦截器
 service.interceptors.request.use(config => {
+  console.log('进入拦截器')
+  console.log(store.getters.token)
   if (store.getters.token) {
     config.headers['X-Token'] = store.getters.token// 让每个请求携带自定义token 请根据实际情况自行修改
   }

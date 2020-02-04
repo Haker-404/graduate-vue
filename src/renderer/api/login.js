@@ -1,6 +1,9 @@
 import request from '@/utils/request'
 
 export function login(username, password) {
+  console.log('登录函数')
+  console.log(username)
+  console.log(password)
   return request({
     url: '/user/login',
     method: 'post',
