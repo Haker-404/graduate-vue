@@ -18,7 +18,6 @@ if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
-
 new Vue({
   components: { App },
   router,

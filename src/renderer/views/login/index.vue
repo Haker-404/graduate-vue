@@ -63,18 +63,20 @@ export default {
         if (valid) {
           this.loading = true
           console.log('初步校验合法性验证成功')
-          this.$store.dispatch('Login', this.loginForm).then(() => {
-            this.loading = false
-            console.log('分发到主页')
-            this.$router.push({ path: '/' })
-          }).catch(error => {
-            console.log(error)
-            console.log('捕获异常')
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
+          //   this.$store.dispatch('Login', this.loginForm).then(() => {
+          //     this.loading = false
+          //     console.log('分发到主页')
+          //     this.$router.push({ path: '/' })
+          //   }).catch(error => {
+          //     console.log(error)
+          //     console.log('捕获异常')
+          //     this.loading = false
+          //   })
+          // } else {
+          //   console.log('error submit!!')
+          //   return false
+          console.log(this.$router)
+          this.$router.push({ path: '/' })
         }
       })
     }
