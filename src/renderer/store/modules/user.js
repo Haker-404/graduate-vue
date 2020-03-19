@@ -1,12 +1,14 @@
-import { login, setToken, logout, getInfo } from '@/api/login'
+import { login, getInfo } from '@/api/login'
 import { getToken, removeToken } from '@/utils/auth'
+import store from '../index'
 
 const user = {
   state: {
     token: getToken(),
     name: '',
     avatar: '',
-    roles: []
+    roles: [],
+    seq: ''
   },
 
   mutations: {
@@ -21,6 +23,9 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_SEQ: (state, seq) => {
+      state.seq = seq
     }
   },
 
@@ -31,10 +36,11 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         login(username, userInfo.password).then(response => {
-          const data = response.data
-          setToken(data.token)
-          commit('SET_TOKEN', 'data.token')
+          const data = response.resp
+          commit('SET_TOKEN', data.msg)
+          commit('SET_SEQ', username)
           console.log('请求后台')
+          console.log(response)
           resolve()
         }).catch(error => {
           console.log('后台抛错', error)
@@ -46,15 +52,14 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
-          const data = response.data
-          if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-            commit('SET_ROLES', data.roles)
+        getInfo(store.getters.seq).then(response => {
+          const data = response.user
+          if (data.name && data.seq > 0) { // 验证返回的roles是否是一个非空数组
+            commit('SET_ROLES', '管理员')
           } else {
             reject('getInfo: roles must be a non-null array !')
           }
           commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
           resolve(response)
         }).catch(error => {
           reject(error)
@@ -65,14 +70,10 @@ const user = {
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          removeToken()
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
+        commit('SET_TOKEN', '')
+        commit('SET_ROLES', '')
+        removeToken()
+        resolve()
       })
     },
 

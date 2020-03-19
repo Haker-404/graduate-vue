@@ -4,22 +4,22 @@ import store from '../store'
 
 // 创建axios实例
 const service = axios.create({
-  // baseURL: process.env.BASE_API, // api的base_url
-  baseURL: '', // api的base_url
-  timeout: 15000 // 请求超时时间
-
+  baseURL: process.env.BASE_API, // api的base_url
+  // baseURL: '', // api的base_url
+  timeout: 150000 // 请求超时时间
 })
 
 // request拦截器
 service.interceptors.request.use(config => {
   console.log('进入拦截器')
-  console.log(store.getters.token)
+  console.log(config)
   if (store.getters.token) {
-    config.headers['X-Token'] = store.getters.token// 让每个请求携带自定义token 请根据实际情况自行修改
+    config.headers.Authorization = 'Bearer ' + store.getters.token// 让每个请求携带自定义token 请根据实际情况自行修改
   }
   return config
 }, error => {
   // Do something with request error
+  console.log('请求被request拦截器拦截')
   console.log(error) // for debug
   Promise.reject(error)
 })
@@ -30,8 +30,10 @@ service.interceptors.response.use(
   /**
   * code为非20000是抛错 可结合自己业务进行修改
   */
+    console.log('获得返回值')
+    console.log(response.data)
     const res = response.data
-    if (res.code !== 200) {
+    if (res.resp == null) {
       Message({
         message: res.message,
         type: 'error',
@@ -52,6 +54,7 @@ service.interceptors.response.use(
       }
       return Promise.reject('error')
     } else {
+      console.log('返回状态200代表成功')
       return response.data
     }
   },

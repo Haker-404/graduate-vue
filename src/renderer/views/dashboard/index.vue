@@ -120,6 +120,17 @@
 
 <template>
     <div id='calendar'>
+        <el-input
+                placeholder=""
+                v-model="name"
+                :disabled="true">
+        </el-input>
+        <el-input
+                placeholder=""
+                v-model="roles"
+                :disabled="true">
+        </el-input>
+
         <!-- 年份 月份 -->
         <div class='month'>
             <ul>
@@ -175,7 +186,15 @@
     </div>
 </template>
 <script>
+    import { mapGetters } from 'vuex'
     export default {
+      name: 'dashboard',
+      computed: {
+        ...mapGetters([
+          'name',
+          'roles'
+        ])
+      },
       data() {
         return {
           currentDay: 1,

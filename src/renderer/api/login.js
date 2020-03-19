@@ -1,24 +1,20 @@
 import request from '@/utils/request'
 
-export function login(username, password) {
-  console.log('登录函数')
-  console.log(username)
-  console.log(password)
+export function login(username, pwd) {
   return request({
     url: '/user/login',
     method: 'post',
     data: {
       username,
-      password
+      pwd
     }
   })
 }
 
-export function getInfo(token) {
+export function getInfo(uid) {
   return request({
-    url: '/user/info',
-    method: 'get',
-    params: { token }
+    url: '/user/info/' + uid,
+    method: 'get'
   })
 }
 

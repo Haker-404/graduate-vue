@@ -107,7 +107,7 @@ export default {
     methods: {
       bindQRCode: function() {
         new QRCode(this.$refs.qrCodeDiv, {
-          text: '扫码签到',
+          text: 'http://139.9.113.111:9091/user/signFrom',
           width: 200,
           height: 200,
           colorDark: '#333333', // 二维码颜色

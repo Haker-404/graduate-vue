@@ -7,6 +7,7 @@ import { Message } from 'element-ui'
 const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
   NProgress.start()
+  console.log('路由前检查token： ' + store.getters.token)
   if (store.getters.token) {
     if (to.path === '/login') {
       next({ path: '/' })
@@ -18,7 +19,7 @@ router.beforeEach((to, from, next) => {
         }).catch((err) => {
           store.dispatch('FedLogOut').then(() => {
             Message.error(err || 'Verification failed, please login again')
-            next({ path: '/' })
+            next({ path: '/login' })
           })
         })
       } else {
@@ -29,8 +30,8 @@ router.beforeEach((to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {
-      console.log('重定向失败')
-      next()
+      console.log('没有token 去登录')
+      next('/login')
       NProgress.done()
     }
   }
