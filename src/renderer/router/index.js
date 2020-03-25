@@ -51,10 +51,10 @@ export const constantRouterMap = [
         meta: { title: 'Table', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
+        path: 'attendance',
+        name: 'attendance',
         component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        meta: { title: 'attendance', icon: 'tree' }
       }
     ]
   },

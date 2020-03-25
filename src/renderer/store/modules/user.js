@@ -1,6 +1,7 @@
 import { login, getInfo } from '@/api/login'
 import { getToken, removeToken } from '@/utils/auth'
 import store from '../index'
+import { getUserList } from '../../api/table'
 
 const user = {
   state: {
@@ -66,7 +67,13 @@ const user = {
         })
       })
     },
-
+    GetUserList({ commit }, date) {
+      return new Promise((resolve, reject) => {
+        getUserList(date).then(response => {
+          resolve(response)
+        })
+      })
+    },
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {

@@ -257,9 +257,10 @@
             confirmButtonText: '确定',
             cancelButtonText: '取消'
           }).then(({ value }) => {
-            this.$data.tableData[0].time = el.toString()
-            console.log(this.$data.tableData[0].time)
-            this.$data.tableData[0].event = value
+            var pop = {}
+            pop.time = el.toString()
+            pop.event = value
+            this.$data.tableData.push(pop)
           }).catch(() => {
             this.$message({
               type: 'info',

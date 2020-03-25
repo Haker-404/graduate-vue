@@ -1,69 +1,118 @@
 <template>
   <div class="app-container">
-    <el-input placeholder="Filter keyword" v-model="filterText" style="margin-bottom:30px;"></el-input>
+    <p></p>
 
-    <el-tree class="filter-tree" :data="data2" :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree2"></el-tree>
+    <div class="block">
+      <span class="demonstration"></span>
+      <el-date-picker
+              v-model="value2"
+              type="datetime"
+              placeholder="选择日期时间"
+              align="right"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              :picker-options="pickerOptions">
+      </el-date-picker>
+      <el-button type="primary" icon="el-icon-search" @click="sign_info(value2,true)">已签到</el-button>
+      <el-button type="primary" icon="el-icon-search" @click="sign_info(value2,false)">未签到</el-button>
+    </div>
+    <br/>
 
+      <el-table
+              :data="tableData.slice((currentPage-1)*20,currentPage*20)"
+              style="width: 100%">
+        <el-table-column
+                prop="date"
+                label="日期"
+                width="350">
+        </el-table-column>
+        <el-table-column
+                prop="name"
+                label="姓名"
+                width="350">
+        </el-table-column>
+        <el-table-column
+                prop="seq"
+                label="学号">
+        </el-table-column>
+      </el-table>
+    <el-pagination
+            :hide-on-single-page="false"
+            :page-size="20"
+            :pager-count="11"
+            layout="prev, pager, next"
+            :total="tableData.length"
+            :current-page="currentPage"
+            @current-change="handleCurrent">
+    </el-pagination>
   </div>
+
+
 </template>
 
 <script>
+import { getUserList } from '../../api/table'
+
 export default {
   watch: {
-    filterText(val) {
-      this.$refs.tree2.filter(val)
-    }
   },
 
   methods: {
-    filterNode(value, data) {
-      if (!value) return true
-      return data.label.indexOf(value) !== -1
+    handleCurrent: function(currentPage) {
+      this.currentPage = currentPage
+      console.log(this.currentPage)
+    },
+    sign_info(value, isSinged) {
+      console.log()
+      console.log('选择的时间：' + value)
+      // this.$store.dispatch('GetUserList', value).then(response => {
+      //   console.log('获取用户列表返回的数据：' + response)
+      //   this.tableData = response.signInfo
+      // })
+      getUserList(value, isSinged).then(response => {
+        this.tableData.splice(0, this.tableData.length)
+        for (let i = 0; i < response.signInfo.length; i++) {
+          var info = {}
+          info.date = response.signInfo[i].date
+          info.name = response.signInfo[i].user.name
+          info.seq = response.signInfo[i].user.seq
+          this.tableData.push(info)
+        }
+      })
     }
+
   },
 
   data() {
     return {
-      filterText: '',
-      data2: [{
-        id: 1,
-        label: 'Level one 1',
-        children: [{
-          id: 4,
-          label: 'Level two 1-1',
-          children: [{
-            id: 9,
-            label: 'Level three 1-1-1'
-          }, {
-            id: 10,
-            label: 'Level three 1-1-2'
-          }]
-        }]
-      }, {
-        id: 2,
-        label: 'Level one 2',
-        children: [{
-          id: 5,
-          label: 'Level two 2-1'
-        }, {
-          id: 6,
-          label: 'Level two 2-2'
-        }]
-      }, {
-        id: 3,
-        label: 'Level one 3',
-        children: [{
-          id: 7,
-          label: 'Level two 3-1'
-        }, {
-          id: 8,
-          label: 'Level two 3-2'
-        }]
+      tableData: [{
+        date: '',
+        name: '',
+        seq: ''
       }],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      }
+      currentPage: 1,
+      pickerOptions: {
+        shortcuts: [{
+          text: '今天',
+          onClick(picker) {
+            picker.$emit('pick', new Date())
+          }
+        }, {
+          text: '昨天',
+          onClick(picker) {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24)
+            picker.$emit('pick', date)
+          }
+        }, {
+          text: '一周前',
+          onClick(picker) {
+            const date = new Date()
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', date)
+          }
+        }]
+      },
+      value2: ''
     }
   }
 }

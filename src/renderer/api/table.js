@@ -7,3 +7,13 @@ export function getList(params) {
     params
   })
 }
+export function getUserList(date, isSigned) {
+  return request({
+    url: '/user/list',
+    method: 'post',
+    data: {
+      date,
+      isSigned
+    }
+  })
+}
