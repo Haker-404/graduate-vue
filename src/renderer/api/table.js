@@ -17,3 +17,9 @@ export function getUserList(date, isSigned) {
     }
   })
 }
+export function search(key) {
+  return request({
+    url: '/user/search' + '?key=' + key,
+    method: 'get'
+  })
+}

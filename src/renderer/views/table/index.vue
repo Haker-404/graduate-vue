@@ -1,70 +1,70 @@
 <template>
   <div class="app-container">
-    <el-table :data="list" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row>
-      <el-table-column align="center" label='ID' width="95">
-        <template slot-scope="scope">
-          {{scope.$index}}
-        </template>
+    <el-row>
+    <el-input v-model="key" placeholder="请输入关键词">
+      <el-button slot="append" icon="el-icon-search" circle @click="search" ></el-button>
+    </el-input>
+    </el-row>
+    <el-table
+            :data="tableData.slice((currentPage-1)*20,currentPage*20)"
+            style="width: 100%">
+      <el-table-column
+              prop="name"
+              label="姓名"
+              width="350">
       </el-table-column>
-      <el-table-column label="Title">
-        <template slot-scope="scope">
-          {{scope.row.title}}
-        </template>
-      </el-table-column>
-      <el-table-column label="Author" width="110" align="center">
-        <template slot-scope="scope">
-          <span>{{scope.row.author}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Pageviews" width="110" align="center">
-        <template slot-scope="scope">
-          {{scope.row.pageviews}}
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="Status" width="110" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{scope.row.status}}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" width="200">
-        <template slot-scope="scope">
-          <i class="el-icon-time"></i>
-          <span>{{scope.row.display_time}}</span>
-        </template>
+      <el-table-column
+              prop="seq"
+              label="学号">
       </el-table-column>
     </el-table>
+    <el-pagination
+            :hide-on-single-page="false"
+            :page-size="20"
+            :pager-count="11"
+            layout="prev, pager, next"
+            :total="tableData.length"
+            :current-page="currentPage"
+            @current-change="handleCurrent">
+    </el-pagination>
   </div>
 </template>
 
 <script>
-import { getList } from '@/api/table'
+import { search } from '@/api/table'
 
 export default {
   data() {
     return {
-      list: null,
-      listLoading: true
+      key: '',
+      tableData: [{
+        Name: '',
+        Seq: ''
+      }],
+      currentPage: 1
     }
-  },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
-  created() {
-    this.fetchData()
   },
   methods: {
-    fetchData() {
-      this.listLoading = true
-      getList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.listLoading = false
+    search() {
+      search(this.key).then(response => {
+        this.tableData = []
+        console.log(response)
+        if (response === null) {
+          console.log(1111)
+          this.$message({
+            message: '无此相关信息，尝试换一个关键词！',
+            type: info,
+            duration: 2000
+          })
+        } else {
+          for (let i = 0; i < response.length; i++) {
+            var info = {}
+            info.name = response[i].Name
+            info.seq = response[i].Seq
+            this.tableData.push(info)
+          }
+        }
+        console.log(response)
       })
     }
   }
